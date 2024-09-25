@@ -6,7 +6,7 @@ export * from 'expo-router';
 declare module 'expo-router' {
   export namespace ExpoRouter {
     export interface __routes<T extends string = string> extends Record<string, unknown> {
-      StaticRoutes: `/` | `/(tabs)` | `/(tabs)/` | `/(tabs)/explore` | `/_sitemap` | `/explore`;
+      StaticRoutes: `/` | `/(tabs)` | `/(tabs)/Auth/login` | `/(tabs)/Auth/register` | `/(tabs)/Auth/resetPass` | `/(tabs)/Config/config` | `/(tabs)/Home/home` | `/(tabs)/Home/listEntry` | `/(tabs)/Home/listWish` | `/(tabs)/Message/addMessage` | `/(tabs)/Message/addMessageVisual` | `/(tabs)/Message/editMessage` | `/(tabs)/Message/editMessageVisual` | `/(tabs)/Message/tableMessage` | `/(tabs)/User/pefilUser` | `/(tabs)/Wish/addWish` | `/(tabs)/Wish/editWish` | `/(tabs)/Wish/tableWish` | `/(tabs)/explore` | `/Auth/login` | `/Auth/register` | `/Auth/resetPass` | `/Config/config` | `/Home/home` | `/Home/listEntry` | `/Home/listWish` | `/Message/addMessage` | `/Message/addMessageVisual` | `/Message/editMessage` | `/Message/editMessageVisual` | `/Message/tableMessage` | `/User/pefilUser` | `/Wish/addWish` | `/Wish/editWish` | `/Wish/tableWish` | `/_sitemap` | `/explore`;
       DynamicRoutes: never;
       DynamicRouteTemplate: never;
     }
