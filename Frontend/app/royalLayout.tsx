@@ -28,9 +28,12 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+      <Stack initialRouteName="Home/home">  {/* Configura la ruta inicial */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="Home/home" options={{ title: 'Home' }} />
+        <Stack.Screen name="tableMessage" options={{ title: 'Mensajes' }} />
+        {/* Puedes agregar la pantalla de not-found nuevamente */}
+        {/* <Stack.Screen name="not-found" options={{ title: 'Page Not Found' }} /> */}
       </Stack>
     </ThemeProvider>
   );
