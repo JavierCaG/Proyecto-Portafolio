@@ -34,15 +34,15 @@ const getRandomResize = () => {
 const EntryListScreen: React.FC<EntryListScreenProps> = ({ entries }) => {
     const renderItem = ({ item }: { item: Entry }) => {
         // Si el contenido tiene imagen o video, aplicamos un tamaño aleatorio
-        const resize = item.content.image || item.content.video ? getRandomResize() : { widthRatio: 1, heightRatio: 1 };
+        const resize = item.content.image || item.content.video ? getRandomResize() : { widthRatio: 2, heightRatio: 3 };
 
         return (
             <View
                 style={[
                     styles.boxContainer,
                     {
-                        flex: resize.widthRatio,
-                        height: item.content.image || item.content.video ? 150 * resize.heightRatio : 'auto',
+                        flex: resize.widthRatio, // Usa widthRatio para el flex
+                        height: 250 * resize.heightRatio, // Usa heightRatio para la altura
                     },
                 ]}
             >
@@ -78,7 +78,7 @@ const EntryListScreen: React.FC<EntryListScreenProps> = ({ entries }) => {
                             useNativeControls
                             isLooping
                         />
-                        {/* Si hay texto o audio acompañando el video, aplica estilo específico */}
+                        {/* Si hay texto o audio acompañando el video*/}
                         {(item.content.text || item.content.audio) && (
                             <View style={styles.overlayContent}>
                                 {item.content.text && (
@@ -125,8 +125,9 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     boxContainer: {
-        marginHorizontal: '1%',
-        marginVertical: 10,
+        marginBottom: '5%',
+        marginRight: '10%',
+        paddingTop: 5,
         padding: 5,
         borderRadius: 15,
         backgroundColor: '#fff',
@@ -147,10 +148,10 @@ const styles = StyleSheet.create({
     },
     videoContainer: {
         width: '100%',
+        paddingTop: 5,
         height: '100%',
         borderRadius: 10,
         overflow: 'hidden',
-        marginBottom: 10,
     },
     imageContainer: {
         width: '100%',
