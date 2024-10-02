@@ -1,15 +1,14 @@
-import React, { useRef } from 'react';
-import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ResponsiveGrid } from 'react-native-flexible-grid';
-import { FontAwesome } from '@expo/vector-icons';
+import React from 'react';
+import { View, Image, Text, StyleSheet } from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
+import { ResponsiveGrid } from 'react-native-flexible-grid';
 
 // Definir las interfaces para el tipado
 interface EntryContent {
-    image?: string | number;
-    text: string;
-    video?: string;
-    audio?: string;
+    image?: string | number | null;
+    text?: string | null;
+    video?: string | number | null;
+    audio?: string | null;
 }
 
 interface Entry {
@@ -22,81 +21,98 @@ interface EntryListScreenProps {
     entries: Entry[];
 }
 
+// Función para obtener un tamaño aleatorio solo para imágenes y videos
+const getRandomResize = () => {
+    const sizes = [
+        { widthRatio: 1, heightRatio: 1 }, // Pequeño
+        { widthRatio: 2, heightRatio: 2 }, // Mediano
+        { widthRatio: 3, heightRatio: 3 }, // Grande
+    ];
+    return sizes[Math.floor(Math.random() * sizes.length)];
+};
+
 const EntryListScreen: React.FC<EntryListScreenProps> = ({ entries }) => {
-    const videoRefs = useRef<{ [key: string]: any }>({});  // Referencias para manejar múltiples videos
-
-    // Función que se encarga de controlar la reproducción del video
-    const handlePlayPause = (id: string, isPlaying: boolean) => {
-        const videoRef = videoRefs.current[id];
-        if (videoRef) {
-            if (isPlaying) {
-                videoRef.pauseAsync();
-            } else {
-                videoRef.playAsync();
-            }
-        }
-    };
-
     const renderItem = ({ item }: { item: Entry }) => {
+        // Si el contenido tiene imagen o video, aplicamos un tamaño aleatorio
+        const resize = item.content.image || item.content.video ? getRandomResize() : { widthRatio: 1, heightRatio: 1 };
+
         return (
-            <View style={styles.entryContainer}>
-                {/* Si tiene video, mostrar el reproductor */}
-                {item.content.video ? (
-                    <View style={styles.videoContainer}>
-                        <Video
-                            ref={(ref) => (videoRefs.current[item.id] = ref)} // Almacenar la referencia del video
-                            source={{ uri: item.content.video }}
-                            style={styles.entryImage}
-                            resizeMode={ResizeMode.COVER}  // Usar ResizeMode
-                            useNativeControls
-                            isLooping
-                            onPlaybackStatusUpdate={(status) => {
-                                if (status.isLoaded) {
-                                    if (!status.isPlaying && status.positionMillis === status.durationMillis) {
-                                        handlePlayPause(item.id, true);  // Pausar al finalizar
-                                    }
-                                } else {
-                                    console.log("Error al cargar el video", status);
-                                }
-                            }}
-                        />
-                        {/* Botón de play/pausa superpuesto */}
-                        <TouchableOpacity
-                            style={styles.playButton}
-                            onPress={() => handlePlayPause(item.id, false)}
-                        >
-                            <FontAwesome
-                                name="play-circle"
-                                size={50}
-                                color="rgba(255, 255, 255, 0.8)"
-                            />
-                        </TouchableOpacity>
-                    </View>
-                ) : (
-                    /* Mostrar imagen si no hay video */
-                    item.content.image && (
+            <View
+                style={[
+                    styles.boxContainer,
+                    {
+                        flex: resize.widthRatio,
+                        height: item.content.image || item.content.video ? 150 * resize.heightRatio : 'auto',
+                    },
+                ]}
+            >
+                {/* Contenedor de imagen */}
+                {item.content.image && (
+                    <View style={styles.imageContainer}>
                         <Image
                             source={typeof item.content.image === 'string' ? { uri: item.content.image } : item.content.image}
-                            style={styles.entryImage}
+                            style={styles.box}
+                            resizeMode="cover"
                         />
-                    )
+                        {/* Si hay texto o audio acompañando la imagen, aplica estilo específico */}
+                        {(item.content.text || item.content.audio) && (
+                            <View style={styles.overlayContent}>
+                                {item.content.text && (
+                                    <Text style={styles.overlayText}>{item.content.text}</Text>
+                                )}
+                                {item.content.audio && (
+                                    <Text style={styles.overlayAudioText}>🎵 Audio disponible</Text>
+                                )}
+                            </View>
+                        )}
+                    </View>
                 )}
 
-                {/* Texto */}
-                <Text style={styles.entryText}>{item.content.text}</Text>
+                {/* Contenedor de video */}
+                {item.content.video && (
+                    <View style={styles.videoContainer}>
+                        <Video
+                            source={typeof item.content.video === 'string' ? { uri: item.content.video } : item.content.video}
+                            style={styles.box}
+                            resizeMode={ResizeMode.COVER}
+                            useNativeControls
+                            isLooping
+                        />
+                        {/* Si hay texto o audio acompañando el video, aplica estilo específico */}
+                        {(item.content.text || item.content.audio) && (
+                            <View style={styles.overlayContent}>
+                                {item.content.text && (
+                                    <Text style={styles.overlayText}>{item.content.text}</Text>
+                                )}
+                                {item.content.audio && (
+                                    <Text style={styles.overlayAudioText}>🎵 Audio disponible</Text>
+                                )}
+                            </View>
+                        )}
+                    </View>
+                )}
 
-                {/* Mostrar si hay audio */}
-                {item.content.audio && <Text style={styles.mediaLabel}>🎵 Audio disponible</Text>}
+                {/* Contenedor para texto o audio que no tienen imagen ni video */}
+                {(!item.content.image && !item.content.video) && (
+                    <View style={styles.textAudioContainer}>
+                        {item.content.text && (
+                            <Text style={styles.text}>{item.content.text}</Text>
+                        )}
+                        {item.content.audio && (
+                            <Text style={styles.audioText}>🎵 Audio disponible</Text>
+                        )}
+                    </View>
+                )}
             </View>
         );
     };
 
     return (
         <ResponsiveGrid
-            keyExtractor={(item) => item.id.toString()}
-            maxItemsPerColumn={2}  // Mantén esto en 2 para una mejor disposición
+            maxItemsPerColumn={2}
             data={entries}
             renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
             style={styles.gridContainer}
         />
     );
@@ -105,48 +121,80 @@ const EntryListScreen: React.FC<EntryListScreenProps> = ({ entries }) => {
 const styles = StyleSheet.create({
     gridContainer: {
         flex: 1,
-        padding: 10,
+        paddingHorizontal: 10,
+        paddingBottom: 20,
     },
-    entryContainer: {
+    boxContainer: {
+        marginHorizontal: '1%',
+        marginVertical: 10,
+        padding: 5,
+        borderRadius: 15,
         backgroundColor: '#fff',
-        padding: 15,
-        borderRadius: 10,
-        margin: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-        minHeight: 200, // Altura mínima consistente para todos los ítems
-        width: '100%',
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 1,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    entryImage: {
-        width: 150,  // Tamaño consistente para imágenes y videos
-        height: 150,
+    box: {
+        width: '100%',
+        height: '100%',
         borderRadius: 10,
-        marginBottom: 10,
-        backgroundColor: '#ddd',  // Placeholder de color si no hay imagen
+        overflow: 'hidden',
     },
     videoContainer: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 10,
+        overflow: 'hidden',
+        marginBottom: 10,
+    },
+    imageContainer: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 10,
+        overflow: 'hidden',
         position: 'relative',
     },
-    playButton: {
+    overlayContent: {
         position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: [{ translateX: -25 }, { translateY: -25 }],
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo oscuro transparente
+        padding: 5,
     },
-    entryText: {
-        fontSize: 16,
-        fontWeight: 'bold',
+    overlayText: {
+        color: '#fff',
+        fontSize: 12,
         textAlign: 'center',
-        marginBottom: 5,
     },
-    mediaLabel: {
+    overlayAudioText: {
+        color: '#fff',
+        fontSize: 10,
+        textAlign: 'center',
+        marginTop: 2,
+    },
+    textAudioContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+    },
+    text: {
         fontSize: 14,
+        color: '#333',
+        textAlign: 'center',
+    },
+    audioText: {
+        fontSize: 12,
         color: '#666',
+        textAlign: 'center',
+        marginTop: 10,
     },
 });
 
