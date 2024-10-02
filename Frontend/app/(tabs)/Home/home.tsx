@@ -4,11 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import BackgroundWrapper from '@/components/background';
 import Header from '../../../components/Header';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import EntryListScreen from './listEntry'; // Asegúrate de que la ruta sea correcta
-
-const localAudio = require('../../../assets/ejemplos/ejAudio.m4a');
-const localVideo = require('../../../assets/ejemplos/ejVideo.mp4');
-const localImage = require('../../../assets/ejemplos/persona.jpg');
+import EntryListScreen from './listEntry'; // Importar el componente que muestra las entradas
 
 const entries = [
   {
@@ -42,75 +38,106 @@ const entries = [
     date: '2024-07-14',
   },
   {
-    id: '4',
+    id: '11',
     content: {
-      image: 'https://via.placeholder.com/200',
-      text: 'Explorando la ciudad',
-      video: undefined,
-      audio: undefined,
+      image: null,
+      text: 'Reflexionando sobre la vida',
+      video: null,
+      audio: null,
     },
-    date: '2024-06-01',
+    date: '2024-09-01',
   },
   {
-    id: '5',
+    id: '12',
     content: {
-      image: undefined,
-      text: 'Viaje en bicicleta por el campo',
+      image: null,
+      text: 'Podcast favorito sobre tecnología',
+      video: null,
+      audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
+    },
+    date: '2024-08-15',
+  },
+  {
+    id: '13',
+    content: {
+      image: null,
+      text: null,
       video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
-      audio: undefined,
+      audio: null,
     },
-    date: '2024-05-20',
+    date: '2024-07-10',
   },
   {
-    id: '6',
+    id: '14',
     content: {
-      image: 'https://via.placeholder.com/150',
-      text: 'Un paseo en el bosque',
-      video: undefined,
-      audio: undefined,
+      image: null,
+      text: 'Audio relajante para meditar',
+      video: null,
+      audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
     },
-    date: '2024-05-15',
+    date: '2024-06-20',
   },
   {
-    id: '7',
+    id: '15',
     content: {
-      image: undefined,
-      text: 'Navegando en un barco',
-      video: undefined,
-      audio: undefined,
+      image: null,
+      text: 'Diario personal',
+      video: null,
+      audio: null,
     },
-    date: '2024-04-10',
+    date: '2024-05-18',
   },
   {
-    id: '8',
+    id: '16',
     content: {
-      image: 'https://via.placeholder.com/150',
-      text: 'Un día en el zoológico',
-      video: undefined,
-      audio: undefined,
+      image: null,
+      text: 'Clase de historia grabada',
+      video: null,
+      audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
     },
-    date: '2024-03-05',
+    date: '2024-05-05',
   },
   {
-    id: '9',
+    id: '17',
     content: {
-      image: undefined,
-      text: 'Picnic en el parque',
+      image: null,
+      text: 'Solo un buen día para caminar',
+      video: null,
+      audio: null,
+    },
+    date: '2024-04-12',
+  },
+  {
+    id: '18',
+    content: {
+      image: null,
+      text: null,
       video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4',
-      audio: undefined,
+      audio: null,
     },
-    date: '2024-02-14',
+    date: '2024-03-30',
   },
   {
-    id: '10',
+    id: '19',
     content: {
-      image: 'https://via.placeholder.com/150',
-      text: 'Una caminata por la montaña',
-      video: undefined,
-      audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+      image: null,
+      text: 'Pensamientos sobre el futuro',
+      video: null,
+      audio: null,
     },
-    date: '2024-01-28',
+    date: '2024-03-01',
   },
+  {
+    id: '20',
+    content: {
+      image: null,
+      text: 'Conversación interesante sobre ciencia',
+      video: null,
+      audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
+    },
+    date: '2024-02-15',
+  }
+  // (Continúa con el resto de las entradas...)
 ];
 
 export default function HomeScreen() {
@@ -170,9 +197,7 @@ export default function HomeScreen() {
   };
 
   return (
-
     <ParallaxScrollView>
-
       <BackgroundWrapper>
         <Header />
         <View style={styles.dailyContainer}>
@@ -211,12 +236,12 @@ export default function HomeScreen() {
 
           {/* Renderiza la lista de entradas */}
           <View style={styles.entryListContainer}>
+            {/* Pasamos las entradas locales como props a EntryListScreen */}
             <EntryListScreen entries={entries} />
           </View>
         </View>
       </BackgroundWrapper>
     </ParallaxScrollView>
-
   );
 }
 
@@ -225,16 +250,17 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     flex: 1,
     alignItems: 'center',
+    paddingBottom: 10, // Añadir espacio al final para que el contenido no quede pegado al borde
   },
   questionContainer: {
     backgroundColor: '#ee684b',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: 15,  // Espacio vertical más amplio
+    paddingHorizontal: 10,  // Espacio horizontal más amplio
     borderRadius: 30,
-    marginBottom: 20,
+    marginBottom: 10,  // Más espacio entre el título y el input
   },
   questionText: {
-    fontSize: 16,
+    fontSize: 12,  // Tamaño de texto más grande para mayor legibilidad
     color: 'black',
     fontWeight: 'bold',
     textAlign: 'center',
@@ -244,22 +270,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '80%',
     justifyContent: 'center',
+    marginBottom: 20,  // Espaciado adicional entre el input y las entradas
   },
   textInput: {
     minHeight: 40,
     maxHeight: 60,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,  // Más espacio interno
     fontSize: 16,
     borderBottomWidth: 2,
     borderBottomColor: '#FFA07A',
     color: 'black',
   },
   addButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 45,  // Botón un poco más grande
+    height: 45,
+    borderRadius: 22.5,
     backgroundColor: '#FFA07A',
     justifyContent: 'center',
     alignItems: 'center',
@@ -268,9 +295,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
+    marginLeft: 10,  // Separación entre el botón y el input
   },
   entryListContainer: {
     flex: 1,
     width: '100%',
+    paddingHorizontal: 5,
   },
 });

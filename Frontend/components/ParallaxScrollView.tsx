@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    gap: 16,
     overflow: 'hidden',
   },
 });
